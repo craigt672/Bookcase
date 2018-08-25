@@ -35,17 +35,17 @@ class myBooks extends Component {
   };
 
   updateBookShelfHandler = (book, newShelf) => {
-    const newBookObj = book;
-    newBookObj["shelf"] = newShelf;
+    book["shelf"] = newShelf;
     this.setState(prevState => ({
-      myBooks: prevState.myBooks.map(bookObj => {
-        if (bookObj.id !== book.id) {
-          return bookObj;
+      myBooks: prevState.myBooks.map(myBook => {
+        if (myBook.id !== book.id) {
+          return myBook;
         }
-        return newBookObj;
+        return book;
       })
     }));
     this.setBookcase(this.state.myBooks);
+    BooksApi.update(book, newShelf);
   };
 
   render() {
