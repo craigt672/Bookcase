@@ -1,7 +1,8 @@
 import React from "react";
-import SearchBooks from "./searchBooks";
+import { Route } from "react-router-dom";
+import SearchBooks from "./containers/searchBooks";
+import MyBooks from "./containers/myBooks";
 import "./App.css";
-import MyBooks from "./myBooks";
 
 class BooksApp extends React.Component {
   state = {
@@ -19,11 +20,8 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <SearchBooks />
-        ) : (
-          <MyBooks title="MyReads" />
-        )}
+        <Route exact path="/" render={() => <MyBooks title="MyReads" />} />
+        <Route exact path="/search" component={SearchBooks} />
       </div>
     );
   }
