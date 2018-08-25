@@ -1,41 +1,33 @@
-import React, { Component } from "react";
+import React from "react";
 import BookShelfChanger from "./BookShelfChanger";
 
-class Book extends Component {
-  state = {
-    shelf: this.props.shelf
+const Book = props => {
+  const changeShelfHandler = e => {
+    const newShelf = e.target.value;
+    props.updateShelf(props.bookRef, newShelf);
   };
-
-  changeShelfHandler = e => {
-    this.setState({
-      shelf: e.target.value
-    });
-  };
-
-  render() {
-    return (
-      <li>
-        <div className="book">
-          <div className="book-top">
-            <div
-              className="book-cover"
-              style={{
-                width: 128,
-                height: 193,
-                backgroundImage: `url(${this.props.coverUrl})`
-              }}
-            />
-            <BookShelfChanger
-              updateShelf={this.changeShelfHandler}
-              currentShelf={this.state.shelf}
-            />
-          </div>
-          <div className="book-title">{this.props.title}</div>
-          <div className="book-authors">{this.props.authors.join(", ")}</div>
+  return (
+    <li>
+      <div className="book">
+        <div className="book-top">
+          <div
+            className="book-cover"
+            style={{
+              width: 128,
+              height: 193,
+              backgroundImage: `url(${props.coverUrl})`
+            }}
+          />
+          <BookShelfChanger
+            updateShelf={changeShelfHandler}
+            currentShelf={props.shelf}
+          />
         </div>
-      </li>
-    );
-  }
-}
+        <div className="book-title">{props.title}</div>
+        <div className="book-authors">{props.authors.join(", ")}</div>
+      </div>
+    </li>
+  );
+};
 
 export default Book;
