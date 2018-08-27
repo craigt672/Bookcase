@@ -1,8 +1,8 @@
 import React from "react";
 
-const BookShelfChanger = props => (
+const BookShelfChanger = ({ updateShelf, currentShelf }) => (
   <div className="book-shelf-changer">
-    <select onChange={props.updateShelf} value={props.currentShelf}>
+    <select onChange={updateShelf} value={currentShelf ? currentShelf : "none"}>
       <option value="move" disabled>
         Move to...
       </option>

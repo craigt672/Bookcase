@@ -1,18 +1,23 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import BooksHeader from "../components/BooksHeader";
+import { GridLoader } from "react-spinners";
 import * as BooksApi from "../utils/BooksAPI";
-import BookShelf from "../components/BookShelf";
+import BooksLoader from "../components/BooksLoader";
+import BookCase from "../components/BookCase";
+import SearchButton from "../components/SearchButton";
 
 class myBooks extends Component {
   state = {
+    books: [],
     bookcase: [],
-    myBooks: []
+    isLoading: true
   };
 
   componentDidMount() {
     BooksApi.getAll().then(books => {
-      this.setState({ myBooks: books });
-      this.setBookcase(this.state.myBooks);
+      this.setState({ books });
+      this.setBookcase(this.state.books);
+      this.setState({ isLoading: false });
     });
   }
 
@@ -38,40 +43,30 @@ class myBooks extends Component {
   updateBookShelfHandler = (book, newShelf) => {
     book["shelf"] = newShelf;
     this.setState(prevState => ({
-      myBooks: prevState.myBooks.map(myBook => {
+      books: prevState.books.map(myBook => {
         if (myBook.id !== book.id) {
           return myBook;
         }
         return book;
       })
     }));
-    this.setBookcase(this.state.myBooks);
+    this.setBookcase(this.state.books);
     BooksApi.update(book, newShelf);
   };
 
   render() {
-    const { bookcase } = this.state;
+    const { bookcase, isLoading } = this.state;
+    const renderBookcase = (
+      <BookCase
+        bookcase={bookcase}
+        updateBookShelf={this.updateBookShelfHandler}
+      />
+    );
     return (
       <div className="list-books">
-        <div className="list-books-title">
-          <h1>{this.props.title}</h1>
-        </div>
-        <div className="list-books-content">
-          {bookcase.map(shelf => (
-            <BookShelf
-              key={shelf.shelfName}
-              title={shelf.shelfName}
-              books={shelf.books}
-              update={this.updateBookShelfHandler}
-            />
-          ))}
-        </div>
-        <div className="open-search">
-          {/* <a onClick={this.props.showSearchPage}>Add a book</a> */}
-          <Link to="/search" className="open-search">
-            Add a book
-          </Link>
-        </div>
+        <BooksHeader title="bookcase" />
+        {isLoading ? <BooksLoader isLoading={isLoading} /> : renderBookcase}
+        <SearchButton>Add a book</SearchButton>
       </div>
     );
   }
