@@ -19,7 +19,6 @@ body,
   padding: 8px 50px;
   background: #d39926;
   text-align: center;
-
   position: fixed;
   top: 0;
   width: 100%;
@@ -28,6 +27,7 @@ body,
     rgba(0, 0, 0, 0.12) 0px 1px 7px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -1px;
   background: linear-gradient(90deg, #f3bc4f, #dd9c19);
 }
+
 @media (max-width: 599px) {
   .list-books-title h1 {
     position: relative;

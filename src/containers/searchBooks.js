@@ -7,61 +7,52 @@ import BooksHeader from "../components/BooksHeader";
 
 class searchBooks extends Component {
   state = {
-    books: [],
-    isLoading: false,
-    isResults: false
+    isLoading: false
   };
 
+  componentWillUnmount() {
+    this.props.updateSearchResults([]);
+  }
+
   queryBooksHandler = query => {
-    console.log(query);
+    const { updateSearchResults } = this.props;
+
     if (!query) {
-      this.setState({
-        books: [],
-        isResults: false
-      });
+      updateSearchResults([]);
+      this.setState({ isResults: false });
       return;
     }
     this.setState({ isLoading: true });
-    BooksAPI.search(query).then(books => {
-      this.setState({ isLoading: false });
-      console.log(books);
 
-      if (!books || books.error) {
+    BooksAPI.search(query).then(results => {
+      this.setState({ isLoading: false });
+
+      if (!results || results.error) {
         return;
       } else {
         this.setState({
           isResults: true
         });
       }
-
-      this.setState({
-        books: books
-      });
+      updateSearchResults(results);
     });
   };
 
-  update = (book, newShelf) => {
-    book["shelf"] = newShelf;
-    this.setState(prevState => ({
-      books: prevState.books.map(myBook => {
-        if (myBook.id !== book.id) {
-          return myBook;
-        }
-        return book;
-      })
-    }));
-    BooksAPI.update(book, newShelf).then(data => {
-      console.log(data);
-    });
+  update = (book, shelf) => {
+    const { updateSearchResults, searchResults, updateBookShelf } = this.props;
+    updateBookShelf(book, shelf);
+    updateSearchResults(searchResults);
   };
 
   render() {
-    const { isLoading, isResults } = this.state;
+    const { isLoading } = this.state;
 
-    const renderResults = isResults ? (
-      <SearchResults books={this.state.books} update={this.update} />
-    ) : (
-      <h1>No Results</h1>
+    const renderResults = (
+      <SearchResults
+        books={this.props.books}
+        searchResults={this.props.searchResults}
+        update={this.update}
+      />
     );
 
     return (

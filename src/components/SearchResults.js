@@ -1,10 +1,10 @@
 import React from "react";
 import Book from "./Book";
 
-const SearchResults = ({ books, update }) => (
+const SearchResults = ({ searchResults, update }) => (
   <div className="search-books-results">
     <ol className="books-grid">
-      {books.map(book => (
+      {searchResults.map(book => (
         <Book
           key={book.id}
           coverUrl={book.imageLinks ? book.imageLinks.thumbnail : ""}

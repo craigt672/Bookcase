@@ -1,4 +1,5 @@
 import React from "react";
+import * as BooksApi from "./utils/BooksAPI";
 import { Route } from "react-router-dom";
 import SearchBooks from "./containers/searchBooks";
 import MyBooks from "./containers/myBooks";
@@ -6,22 +7,90 @@ import "./App.css";
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false
+    myBooks: [],
+    bookcase: [],
+    searchResults: []
   };
 
-  componentDidMount() {}
+  updateMyBooks = newBooks => {
+    this.setState({ myBooks: newBooks });
+  };
+
+  updateBookShelfHandler = (book, newShelf) => {
+    book["shelf"] = newShelf;
+    this.setState(prevState => ({
+      myBooks: prevState.myBooks.map(myBook => {
+        if (myBook.id !== book.id) {
+          return myBook;
+        }
+        return book;
+      })
+    }));
+    BooksApi.update(book, newShelf);
+  };
+
+  setBookcase = books => {
+    this.setState({
+      bookcase: [
+        {
+          shelfName: "Currently Reading",
+          books: books.filter(book => book.shelf === "currentlyReading")
+        },
+        {
+          shelfName: "Want to Read",
+          books: books.filter(book => book.shelf === "wantToRead")
+        },
+        {
+          shelfName: "Read",
+          books: books.filter(book => book.shelf === "read")
+        }
+      ]
+    });
+  };
+
+  updateSearchResults = results => {
+    this.setState({
+      searchResults: results.map(bookResult => {
+        let book = bookResult;
+        this.state.myBooks.forEach(myBook => {
+          if (myBook.id === bookResult.id) {
+            book = myBook;
+          }
+        });
+        return book;
+      })
+    });
+  };
 
   render() {
     return (
       <div className="app">
-        <Route exact path="/" render={() => <MyBooks title="MyReads" />} />
-        <Route exact path="/search" component={SearchBooks} />
+        <Route
+          exact
+          path="/"
+          render={() => (
+            <MyBooks
+              title="MyReads"
+              updateBookShelf={this.updateBookShelfHandler}
+              books={this.state.myBooks}
+              bookcase={this.state.bookcase}
+              updateMyBookCase={this.setBookcase}
+              updateMyBooks={this.updateMyBooks}
+            />
+          )}
+        />
+        <Route
+          exact
+          path="/search"
+          render={() => (
+            <SearchBooks
+              updateBookShelf={this.updateBookShelfHandler}
+              books={this.state.myBooks}
+              searchResults={this.state.searchResults}
+              updateSearchResults={this.updateSearchResults}
+            />
+          )}
+        />
       </div>
     );
   }
